@@ -10,8 +10,16 @@ export class CompanyService {
 
   async companys(
     CompanyWhereUniqueInput: Prisma.CompanyWhereUniqueInput,
-  ): Promise<Omit<Company, 'passwod'> | null> {
-    return this.prisma.company.findUnique({ where: CompanyWhereUniqueInput });
+  ): Promise<Omit<Company, 'password'> | null> {
+    return this.prisma.company.findUnique({
+      where: CompanyWhereUniqueInput,
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        password: false,
+      },
+    });
   }
 
   async create(data: Prisma.CompanyCreateInput) {
