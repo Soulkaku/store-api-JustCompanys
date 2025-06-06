@@ -1,26 +1,25 @@
-import { Injectable } from '@nestjs/common';
-import { CreateCompanyDto } from './dto/create-company.dto';
-import { UpdateCompanyDto } from './dto/update-company.dto';
+import { PrismaService } from 'src/database/prisma.sevice';
+import { Company, Prisma } from '@prisma/client';
+import { Inject, Injectable } from '@nestjs/common';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class CompanyService {
-  create(createCompanyDto: CreateCompanyDto) {
-    return 'This action adds a new company';
+  @Inject()
+  private readonly prisma: PrismaService;
+
+  async companys(
+    CompanyWhereUniqueInput: Prisma.CompanyWhereUniqueInput,
+  ): Promise<Omit<Company, 'passwod'> | null> {
+    return this.prisma.company.findUnique({ where: CompanyWhereUniqueInput });
   }
 
-  findAll() {
-    return `This action returns all company`;
-  }
+  async create(data: Prisma.CompanyCreateInput) {
+    const hashPassword = await bcrypt.hash(data.password, 10);
+    console.log(data);
 
-  findOne(id: number) {
-    return `This action returns a #${id} company`;
-  }
-
-  update(id: number, updateCompanyDto: UpdateCompanyDto) {
-    return `This action updates a #${id} company`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} company`;
+    return this.prisma.company.create({
+      data: { ...data, password: hashPassword },
+    });
   }
 }

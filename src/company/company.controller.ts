@@ -1,34 +1,33 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Inject,
+  Param,
+  ParseIntPipe,
+  Post,
+  ValidationPipe,
+} from '@nestjs/common';
 import { CompanyService } from './company.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
-import { UpdateCompanyDto } from './dto/update-company.dto';
+import { Company as companyModel } from '@prisma/client';
 
 @Controller('company')
 export class CompanyController {
-  constructor(private readonly companyService: CompanyService) {}
+  @Inject()
+  private readonly companyService: CompanyService;
 
-  @Post()
-  create(@Body() createCompanyDto: CreateCompanyDto) {
+  @Post('signin')
+  async create(
+    @Body(new ValidationPipe()) createCompanyDto: CreateCompanyDto,
+  ): Promise<companyModel> {
     return this.companyService.create(createCompanyDto);
   }
 
-  @Get()
-  findAll() {
-    return this.companyService.findAll();
-  }
-
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.companyService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCompanyDto: UpdateCompanyDto) {
-    return this.companyService.update(+id, updateCompanyDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.companyService.remove(+id);
+  async getCompany(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<companyModel | null> {
+    return this.companyService.companys({ id });
   }
 }
