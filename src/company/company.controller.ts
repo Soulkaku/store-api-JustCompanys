@@ -1,10 +1,12 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Inject,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   UseGuards,
   ValidationPipe,
@@ -13,13 +15,13 @@ import { CompanyService } from './company.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { Company as companyModel } from '@prisma/client';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { UpdateCompanyDto } from './dto/update-company.dto';
 
 @Controller('company')
 export class CompanyController {
   @Inject()
   private readonly companyService: CompanyService;
 
-  @UseGuards(AuthGuard)
   @Post('signin')
   async create(
     @Body(new ValidationPipe()) createCompanyDto: CreateCompanyDto,
@@ -33,5 +35,23 @@ export class CompanyController {
     @Param('id', ParseIntPipe) id: number,
   ): Promise<Omit<companyModel, 'password'> | null> {
     return this.companyService.companys({ id });
+  }
+
+  @UseGuards(AuthGuard)
+  @Patch(':id')
+  async updateCompany(
+    @Param('id', ParseIntPipe) id: number,
+    @Body(new ValidationPipe()) updateCompanyDto: UpdateCompanyDto,
+  ) {
+    return this.companyService.update({
+      where: { id },
+      data: updateCompanyDto,
+    });
+  }
+
+  @UseGuards(AuthGuard)
+  @Delete(':id')
+  async deleteCompany(@Param('id', ParseIntPipe) id: number) {
+    return this.companyService.delete({ where: { id } });
   }
 }

@@ -30,4 +30,30 @@ export class CompanyService {
       data: { ...data, password: hashPassword },
     });
   }
+
+  async update(params: {
+    where: Prisma.CompanyWhereUniqueInput;
+    data: Prisma.CompanyUpdateInput;
+  }) {
+    const { where, data } = params;
+
+    const updatePayload: Prisma.CompanyUpdateInput = { ...data };
+
+    if (
+      updatePayload.password !== undefined ||
+      updatePayload.password !== null
+    ) {
+      const hashPassword = await bcrypt.hash(
+        updatePayload.password as string,
+        10,
+      );
+      updatePayload.password = hashPassword;
+    }
+
+    return this.prisma.company.update({ where, data: updatePayload });
+  }
+
+  async delete(where: Prisma.CompanyWhereUniqueInput) {
+    return this.prisma.company.delete({ where });
+  }
 }
