@@ -40,7 +40,7 @@ export class CompanyService {
     const updatePayload: Prisma.CompanyUpdateInput = { ...data };
 
     if (
-      updatePayload.password !== undefined ||
+      updatePayload.password !== undefined &&
       updatePayload.password !== null
     ) {
       const hashPassword = await bcrypt.hash(

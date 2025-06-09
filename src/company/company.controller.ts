@@ -52,6 +52,6 @@ export class CompanyController {
   @UseGuards(AuthGuard)
   @Delete(':id')
   async deleteCompany(@Param('id', ParseIntPipe) id: number) {
-    return this.companyService.delete({ where: { id } });
+    return this.companyService.delete({ id });
   }
 }
