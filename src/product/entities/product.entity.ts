@@ -5,5 +5,5 @@ export class IProduct implements Product {
   name: string;
   description: string;
   images: string[];
-  companyId: number
+  companyId: number;
 }
