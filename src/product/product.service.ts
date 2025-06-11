@@ -15,19 +15,23 @@ export class ProductService {
     });
   }
 
-  async getAllProducts(where: Prisma.ProductWhereUniqueInput) {
-    return this.prisma.product.findMany({ where });
+  async getAll(companyId: number) {
+    return this.prisma.product.findMany({
+      where: {
+        companyId: {
+          equals: companyId,
+        },
+      },
+    });
   }
 
-  async updateProduct(params: {
+  async updateOne(params: {
     where: Prisma.ProductWhereUniqueInput;
     data: Prisma.ProductUpdateInput;
   }) {
-    const { where, data } = params;
+    // const { where, data } = params;
 
-    const updatePayload = { ...data };
-
-    return this.prisma.product.update({ where, data: updatePayload });
+    return await this.prisma.product.update(params);
   }
 
   async delete(where: Prisma.ProductWhereUniqueInput) {
