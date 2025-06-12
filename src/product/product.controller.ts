@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Inject,
   Param,
@@ -52,5 +53,14 @@ export class ProductController {
       where: { id },
       data: updateProductDto,
     });
+  }
+
+  @Delete('delete/:product')
+  @UseGuards(AuthGuard)
+  deleteProduct(
+    @Param('product', ParseIntPipe) product: number,
+    @Request() token: any,
+  ) {
+    return this.productService.delete(product, token);
   }
 }
