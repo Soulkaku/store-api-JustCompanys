@@ -1,7 +1,8 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { ForbiddenException, Inject, Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/database/prisma.sevice';
 import { CreateProductDto } from './dto/create-product.dto';
+import { error } from 'console';
 
 @Injectable()
 export class ProductService {
@@ -34,7 +35,21 @@ export class ProductService {
     return await this.prisma.product.update(params);
   }
 
-  async delete(where: Prisma.ProductWhereUniqueInput) {
-    return this.prisma.product.delete({ where });
+  async delete(
+    id: {
+      product: number;
+      company: number;
+    },
+    token: any,
+  ) {
+    const { company, product } = id;
+    const companyPayloadId = token.company.sub;
+    console.log(companyPayloadId);
+
+    if (company !== companyPayloadId) {
+      throw new ForbiddenException('the IDs are not the same');
+    }
+
+    return this.prisma.product.delete({ where: { id: product } });
   }
 }
