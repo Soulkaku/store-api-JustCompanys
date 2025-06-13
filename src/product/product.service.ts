@@ -2,6 +2,7 @@ import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Prisma, Product } from '@prisma/client';
 import { PrismaService } from 'src/database/prisma.sevice';
 import { CreateProductDto } from './dto/create-product.dto';
+import { AuthRequest } from 'src/auth/interfaces/authRequest.interface';
 
 @Injectable()
 export class ProductService {
@@ -36,7 +37,7 @@ export class ProductService {
       productId: number;
       data: Prisma.ProductUpdateInput;
     },
-    token: any,
+    token: AuthRequest,
   ) {
     const { productId, data } = params;
     const companyTokenId: number = token.company.sub;
@@ -45,22 +46,22 @@ export class ProductService {
 
     if (!verifyId) {
       throw new UnauthorizedException(
-        'User dont have permission to update this product',
+        'User does not have permission to update this product',
       );
     }
 
     return await this.prisma.product.update({ where: { id: productId }, data });
   }
 
-  async delete(product: number, token: any) {
+  async delete(product: number, token: AuthRequest) {
     const companyPayloadId: number = token.company.sub;
-    console.log(companyPayloadId);
+    console.log(token.company);
 
     const verifyId = await this.verifyData(companyPayloadId, product);
 
     if (!verifyId) {
       throw new UnauthorizedException(
-        'User dont have permission to delete this product',
+        'User does not have permission to delete this product',
       );
     }
 

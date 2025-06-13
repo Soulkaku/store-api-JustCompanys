@@ -16,17 +16,18 @@ import { AuthGuard } from 'src/auth/auth.guard';
 import { CreateProductDto } from './dto/create-product.dto';
 import { ProductService } from './product.service';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { AuthRequest } from 'src/auth/interfaces/authRequest.interface';
 
 @Controller('product')
 export class ProductController {
   @Inject()
   private readonly productService: ProductService;
 
-  @Post()
+  @Post('create')
   @UseGuards(AuthGuard)
   create(
     @Body(new ValidationPipe()) createProductDto: CreateProductDto,
-    @Request() req: any,
+    @Request() req: AuthRequest,
   ) {
     const companyId: number = req.company.sub;
 
@@ -37,7 +38,7 @@ export class ProductController {
 
   @Get('/:company')
   @UseGuards(AuthGuard)
-  getAllProducts(@Request() req: any) {
+  getAllProducts(@Request() req: AuthRequest) {
     const companyId: number = req.company.sub;
 
     return this.productService.getAll(companyId);
@@ -48,7 +49,7 @@ export class ProductController {
   updateOneProduct(
     @Param('product', ParseIntPipe) product: number,
     @Body(new ValidationPipe()) updateProductDto: UpdateProductDto,
-    @Request() req: any,
+    @Request() req: AuthRequest,
   ) {
     return this.productService.updateOne(
       { productId: product, data: updateProductDto },
@@ -60,7 +61,7 @@ export class ProductController {
   @UseGuards(AuthGuard)
   deleteProduct(
     @Param('product', ParseIntPipe) product: number,
-    @Request() token: any,
+    @Request() token: AuthRequest,
   ) {
     return this.productService.delete(product, token);
   }
