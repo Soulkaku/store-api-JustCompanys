@@ -31,26 +31,26 @@ export class ProductService {
     });
   }
 
-  // async updateOne(
-  //   params: {
-  //     where: Prisma.ProductWhereUniqueInput;
-  //     data: Prisma.ProductUpdateInput;
-  //   },
-  //   token: any,
-  // ) {
-  //   const companyPayloadId: number = token.company.sub;
-  //   const { data, where } = params;
+  async updateOne(
+    params: {
+      productId: number;
+      data: Prisma.ProductUpdateInput;
+    },
+    token: any,
+  ) {
+    const { productId, data } = params;
+    const companyTokenId: number = token.company.sub;
 
-  //   const verifyId = await this.verifyData(companyPayloadId, where);
+    const verifyId = await this.verifyData(companyTokenId, productId);
 
-  //   if (!verifyId) {
-  //     throw new UnauthorizedException(
-  //       'User dont have permission to update this product',
-  //     );
-  //   }
+    if (!verifyId) {
+      throw new UnauthorizedException(
+        'User dont have permission to update this product',
+      );
+    }
 
-  //   return await this.prisma.product.update(params);
-  // }
+    return await this.prisma.product.update({ where: { id: productId }, data });
+  }
 
   async delete(product: number, token: any) {
     const companyPayloadId: number = token.company.sub;

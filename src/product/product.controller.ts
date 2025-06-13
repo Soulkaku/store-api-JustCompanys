@@ -43,18 +43,6 @@ export class ProductController {
     return this.productService.getAll(companyId);
   }
 
-  @Patch('update/:id')
-  @UseGuards(AuthGuard)
-  updateProduct(
-    @Body(new ValidationPipe()) updateProductDto: UpdateProductDto,
-    @Param('id', ParseIntPipe) id: number,
-  ) {
-    return this.productService.updateOne({
-      where: { id },
-      data: updateProductDto,
-    });
-  }
-
   @Delete('delete/:product')
   @UseGuards(AuthGuard)
   deleteProduct(
