@@ -22,7 +22,7 @@ export class CompanyController {
   @Inject()
   private readonly companyService: CompanyService;
 
-  @Post('signin')
+  @Post('signup')
   async create(
     @Body(new ValidationPipe()) createCompanyDto: CreateCompanyDto,
   ): Promise<companyModel> {
