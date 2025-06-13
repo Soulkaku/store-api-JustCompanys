@@ -35,12 +35,25 @@ export class ProductController {
     return this.productService.create(createProductDto, companyId);
   }
 
-  @Get()
+  @Get('/:company')
   @UseGuards(AuthGuard)
   getAllProducts(@Request() req: any) {
     const companyId: number = req.company.sub;
 
     return this.productService.getAll(companyId);
+  }
+
+  @Patch('/update/:product')
+  @UseGuards(AuthGuard)
+  updateOneProduct(
+    @Param('product', ParseIntPipe) product: number,
+    @Body(new ValidationPipe()) updateProductDto: UpdateProductDto,
+    @Request() req: any,
+  ) {
+    return this.productService.updateOne(
+      { productId: product, data: updateProductDto },
+      req,
+    );
   }
 
   @Delete('delete/:product')
